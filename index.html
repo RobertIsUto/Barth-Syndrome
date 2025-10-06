@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barth Syndrome: 3D Molecular Visualization</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>Barth Syndrome: Interactive Molecular Visualization</title>
     <style>
         * {
             margin: 0;
@@ -82,7 +81,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 0 2rem;
         }
@@ -118,130 +117,198 @@
             letter-spacing: 1px;
         }
 
-        h4 {
-            color: #ccc;
-            font-weight: 400;
-            margin: 1.5rem 0 0.5rem 0;
-            font-size: 1.1rem;
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
         }
 
-        p, li {
-            color: #999;
-            font-weight: 300;
-            margin-bottom: 1rem;
+        .comparison-card {
+            background: #111;
+            border: 2px solid #333;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
         }
 
-        .viewer-container {
+        .comparison-card:hover {
+            border-color: #666;
+            transform: translateY(-5px);
+        }
+
+        .comparison-card.active {
+            border-color: #fff;
+        }
+
+        .card-header {
             background: #000;
-            border: 1px solid #333;
-            margin: 2rem 0;
-            position: relative;
-            height: 600px;
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+            text-align: center;
         }
 
-        #viewer3D {
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        .card-visual {
+            height: 400px;
+            position: relative;
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+
+        .card-data {
+            padding: 1.5rem;
+            background: #111;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #222;
+            font-size: 0.9rem;
+        }
+
+        .data-label {
+            color: #999;
+        }
+
+        .data-value {
+            color: #fff;
+            font-weight: 400;
+        }
+
+        .data-value.good {
+            color: #4CAF50;
+        }
+
+        .data-value.bad {
+            color: #f44336;
+        }
+
+        .data-value.improving {
+            color: #2196F3;
+        }
+
+        .visual-container {
             width: 100%;
             height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
 
-        .controls-panel {
-            background: #111;
-            border: 1px solid #333;
-            padding: 2rem;
-            margin: 2rem 0;
+        .mitochondrion {
+            position: relative;
+            width: 280px;
+            height: 160px;
         }
 
-        .control-group {
-            margin-bottom: 2rem;
+        .outer-membrane {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            opacity: 0.4;
         }
 
-        .control-group label {
-            display: block;
-            font-weight: 300;
-            margin-bottom: 1rem;
-            color: #ccc;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
+        .inner-membrane {
+            position: absolute;
+            width: 90%;
+            height: 85%;
+            left: 5%;
+            top: 7.5%;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            opacity: 0.5;
         }
 
-        .radio-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+        .cristae-container {
+            position: absolute;
+            width: 80%;
+            height: 70%;
+            left: 10%;
+            top: 15%;
         }
 
-        .radio-option input[type="radio"] {
-            display: none;
+        .crista {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #aaa;
+            left: 0;
         }
 
-        .radio-option label {
-            display: block;
-            padding: 1.5rem;
-            background: #000;
-            border: 1px solid #333;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-            font-weight: 300;
-            letter-spacing: 1px;
+        .molecule {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
         }
 
-        .radio-option input[type="radio"]:checked + label {
+        .cardiolipin {
             background: #fff;
-            color: #000;
-            border-color: #fff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        .radio-option label:hover {
-            border-color: #666;
+        .mlcl {
+            background: #666;
+            box-shadow: 0 0 10px rgba(150, 150, 150, 0.3);
         }
 
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+        .etc-complex {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #888;
+            transform: rotate(45deg);
         }
 
-        .checkbox-option {
-            background: #000;
+        .aav-particle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        .comparison-label {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(0, 0, 0, 0.8);
             border: 1px solid #333;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .checkbox-option:hover {
-            border-color: #666;
-        }
-
-        .checkbox-option.active {
-            background: #fff;
-            color: #000;
-            border-color: #fff;
-        }
-
-        .checkbox-option input[type="checkbox"] {
-            margin-right: 0.5rem;
-        }
-
-        .checkbox-option label {
-            cursor: pointer;
-            font-weight: 300;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
             letter-spacing: 1px;
-            font-size: 0.9rem;
-        }
-
-        .info-box {
-            background: #111;
-            border: 1px solid #333;
-            padding: 2rem;
-            margin: 2rem 0;
-            border-left: 3px solid #fff;
-        }
-
-        .info-box.data {
-            border-left-color: #666;
         }
 
         .stats-grid {
@@ -275,17 +342,12 @@
             margin: 1rem 0;
         }
 
-        .stat-card p {
-            color: #666;
-            font-size: 0.9rem;
-            margin: 0.5rem 0 0 0;
-        }
-
-        .reference {
-            font-size: 0.8rem;
-            color: #555;
-            font-style: italic;
-            margin-top: 0.5rem;
+        .info-box {
+            background: #111;
+            border: 1px solid #333;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 3px solid #fff;
         }
 
         .pathway-container {
@@ -355,69 +417,6 @@
             background: #0a0a0a;
         }
 
-        .legend {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .legend-item {
-            background: #111;
-            border: 1px solid #333;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .legend-color {
-            width: 40px;
-            height: 40px;
-            border: 1px solid #666;
-            flex-shrink: 0;
-        }
-
-        .legend-text {
-            font-size: 0.9rem;
-            color: #999;
-            font-weight: 300;
-        }
-
-        .slider-container {
-            margin: 1rem 0;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 2px;
-            background: #333;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 15px;
-            height: 15px;
-            background: #fff;
-            cursor: pointer;
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 15px;
-            height: 15px;
-            background: #fff;
-            cursor: pointer;
-            border: none;
-        }
-
-        .value-display {
-            color: #fff;
-            font-weight: 300;
-            margin-left: 1rem;
-        }
-
         .reference-list {
             list-style: none;
             counter-reset: reference-counter;
@@ -457,27 +456,30 @@
             font-weight: 300;
         }
 
-        .viewer-info {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #333;
-            padding: 1rem;
-            color: #fff;
-            font-size: 0.9rem;
-            max-width: 300px;
+        .reference {
+            font-size: 0.8rem;
+            color: #555;
+            font-style: italic;
+            margin-top: 0.5rem;
         }
 
-        .viewer-controls {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #333;
-            padding: 1rem;
+        p, li {
             color: #999;
-            font-size: 0.8rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        h4 {
+            color: #ccc;
+            font-weight: 400;
+            margin: 1.5rem 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 1200px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
@@ -487,14 +489,6 @@
             
             .container {
                 padding: 0 1rem;
-            }
-
-            .viewer-container {
-                height: 400px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
             }
 
             nav button {
@@ -507,13 +501,13 @@
 <body>
     <header class="header">
         <h1>BARTH SYNDROME</h1>
-        <p>Three-Dimensional Molecular Analysis</p>
+        <p>Interactive Molecular Comparison</p>
         <p style="font-size: 0.85rem; color: #666; margin-top: 1rem; letter-spacing: 1px;">Developed by Robert Nguyen</p>
     </header>
 
     <nav>
         <button onclick="showSection('overview')" class="active">Overview</button>
-        <button onclick="showSection('visualization')">3D Visualization</button>
+        <button onclick="showSection('comparison')">Visual Comparison</button>
         <button onclick="showSection('molecular')">Molecular Pathway</button>
         <button onclick="showSection('therapy')">Gene Therapy</button>
         <button onclick="showSection('data')">Clinical Data</button>
@@ -601,7 +595,7 @@
                 </tbody>
             </table>
 
-            <h3>Biochemical Markers</h3>
+            <h3>Key Diagnostic Markers</h3>
             
             <div class="pathway-container">
                 <div class="pathway-step" data-step="1">
@@ -619,128 +613,147 @@
                     <p>Elevated urinary excretion of 3-MGCA</p>
                     <p class="reference">Barth et al., 1983</p>
                 </div>
-                <div class="pathway-step" data-step="4">
-                    <h4>Abnormal Acyl Chain Composition</h4>
-                    <p>Loss of symmetric linoleic acid enrichment</p>
-                    <p class="reference">Vreken et al., 2000</p>
-                </div>
             </div>
         </section>
 
-        <!-- 3D Visualization Section -->
-        <section id="visualization" class="section">
-            <h2>Three-Dimensional Molecular Visualization</h2>
+        <!-- Visual Comparison Section -->
+        <section id="comparison" class="section">
+            <h2>Interactive Visual Comparison</h2>
             
-            <div class="controls-panel">
-                <div class="control-group">
-                    <label>Cell State</label>
-                    <div class="radio-group">
-                        <div class="radio-option">
-                            <input type="radio" id="state-normal" name="cellState" value="normal" checked onchange="updateVisualization()">
-                            <label for="state-normal">Normal Cell<br><small>Functional TAZ</small></label>
+            <p style="text-align: center; font-size: 1.1rem; margin-bottom: 3rem; color: #ccc;">
+                Click each card to see detailed molecular differences between states
+            </p>
+
+            <div class="comparison-grid">
+                <!-- Normal Cell -->
+                <div class="comparison-card active" id="card-normal">
+                    <div class="card-header">
+                        <h3>NORMAL CELL</h3>
+                        <p style="color: #4CAF50; margin-top: 0.5rem;">Functional TAZ Gene</p>
+                    </div>
+                    <div class="card-visual">
+                        <div class="comparison-label">HEALTHY</div>
+                        <div class="visual-container" id="visual-normal"></div>
+                    </div>
+                    <div class="card-data">
+                        <div class="data-row">
+                            <span class="data-label">MLCL/CL Ratio</span>
+                            <span class="data-value good">0.1</span>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="state-barth" name="cellState" value="barth" onchange="updateVisualization()">
-                            <label for="state-barth">Barth Syndrome<br><small>Mutated TAZ</small></label>
+                        <div class="data-row">
+                            <span class="data-label">Mature Cardiolipin</span>
+                            <span class="data-value good">80%</span>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="state-therapy" name="cellState" value="therapy" onchange="updateVisualization()">
-                            <label for="state-therapy">Gene Therapy<br><small>AAV9-Delivered TAZ</small></label>
+                        <div class="data-row">
+                            <span class="data-label">Cristae Organization</span>
+                            <span class="data-value good">Organized</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">ATP Production</span>
+                            <span class="data-value good">100%</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Cardiac Function (EF)</span>
+                            <span class="data-value good">60%</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="control-group">
-                    <label>Visualization Components</label>
-                    <div class="checkbox-group">
-                        <div class="checkbox-option active" onclick="toggleComponent('mitochondria', this)">
-                            <input type="checkbox" id="show-mito" checked>
-                            <label for="show-mito">Mitochondrial Membrane</label>
+                <!-- Barth Syndrome -->
+                <div class="comparison-card" id="card-barth">
+                    <div class="card-header">
+                        <h3>BARTH SYNDROME</h3>
+                        <p style="color: #f44336; margin-top: 0.5rem;">Mutated TAZ Gene</p>
+                    </div>
+                    <div class="card-visual">
+                        <div class="comparison-label">DISEASED</div>
+                        <div class="visual-container" id="visual-barth"></div>
+                    </div>
+                    <div class="card-data">
+                        <div class="data-row">
+                            <span class="data-label">MLCL/CL Ratio</span>
+                            <span class="data-value bad">>1.0</span>
                         </div>
-                        <div class="checkbox-option active" onclick="toggleComponent('cristae', this)">
-                            <input type="checkbox" id="show-cristae" checked>
-                            <label for="show-cristae">Cristae Structure</label>
+                        <div class="data-row">
+                            <span class="data-label">Mature Cardiolipin</span>
+                            <span class="data-value bad">20%</span>
                         </div>
-                        <div class="checkbox-option active" onclick="toggleComponent('cardiolipin', this)">
-                            <input type="checkbox" id="show-cl" checked>
-                            <label for="show-cl">Cardiolipin Molecules</label>
+                        <div class="data-row">
+                            <span class="data-label">Cristae Organization</span>
+                            <span class="data-value bad">Disorganized</span>
                         </div>
-                        <div class="checkbox-option active" onclick="toggleComponent('mlcl', this)">
-                            <input type="checkbox" id="show-mlcl" checked>
-                            <label for="show-mlcl">MLCL Accumulation</label>
+                        <div class="data-row">
+                            <span class="data-label">ATP Production</span>
+                            <span class="data-value bad">40%</span>
                         </div>
-                        <div class="checkbox-option active" onclick="toggleComponent('etc', this)">
-                            <input type="checkbox" id="show-etc" checked>
-                            <label for="show-etc">ETC Complexes</label>
-                        </div>
-                        <div class="checkbox-option active" onclick="toggleComponent('tafazzin', this)">
-                            <input type="checkbox" id="show-taz" checked>
-                            <label for="show-taz">Tafazzin Enzyme</label>
-                        </div>
-                        <div class="checkbox-option active" onclick="toggleComponent('aav', this)">
-                            <input type="checkbox" id="show-aav" checked>
-                            <label for="show-aav">AAV9 Vectors</label>
+                        <div class="data-row">
+                            <span class="data-label">Cardiac Function (EF)</span>
+                            <span class="data-value bad">25%</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="control-group">
-                    <label>
-                        Rotation Speed
-                        <span class="value-display" id="rotationValue">0.5</span>
-                    </label>
-                    <div class="slider-container">
-                        <input type="range" id="rotationSlider" min="0" max="100" value="50" oninput="updateRotation(this.value)">
+                <!-- Gene Therapy -->
+                <div class="comparison-card" id="card-therapy">
+                    <div class="card-header">
+                        <h3>GENE THERAPY</h3>
+                        <p style="color: #2196F3; margin-top: 0.5rem;">AAV9-Delivered TAZ</p>
+                    </div>
+                    <div class="card-visual">
+                        <div class="comparison-label">RECOVERING</div>
+                        <div class="visual-container" id="visual-therapy"></div>
+                    </div>
+                    <div class="card-data">
+                        <div class="data-row">
+                            <span class="data-label">MLCL/CL Ratio</span>
+                            <span class="data-value improving">0.3</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Mature Cardiolipin</span>
+                            <span class="data-value improving">70%</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Cristae Organization</span>
+                            <span class="data-value improving">Improving</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">ATP Production</span>
+                            <span class="data-value improving">80%</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Cardiac Function (EF)</span>
+                            <span class="data-value improving">55%</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="viewer-container">
-                <div id="viewer3D"></div>
-                <div class="viewer-info" id="viewerInfo">
-                    <strong>LOADING 3D MODEL...</strong>
-                </div>
-                <div class="viewer-controls">
-                    <p>Click and drag to rotate | Scroll to zoom</p>
-                </div>
-            </div>
+            <h3>Key Visual Differences</h3>
+            <div class="info-box">
+                <h4>Normal Cell (Healthy)</h4>
+                <ul>
+                    <li><strong>White molecules:</strong> Abundant mature cardiolipin (CL) properly distributed</li>
+                    <li><strong>Parallel lines:</strong> Organized cristae for efficient ATP production</li>
+                    <li><strong>Squares:</strong> Active electron transport chain complexes</li>
+                    <li><strong>Steady state:</strong> All components working optimally</li>
+                </ul>
 
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #fff;"></div>
-                    <div class="legend-text">Outer Mitochondrial Membrane</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #ddd;"></div>
-                    <div class="legend-text">Inner Mitochondrial Membrane</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #aaa;"></div>
-                    <div class="legend-text">Cristae Junctions</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #fff; border: 2px solid #000;"></div>
-                    <div class="legend-text">Mature Cardiolipin (CL)</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #666;"></div>
-                    <div class="legend-text">Monolysocardiolipin (MLCL)</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #888;"></div>
-                    <div class="legend-text">ETC Complexes (I, III, IV, V)</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #444;"></div>
-                    <div class="legend-text">Tafazzin Enzyme</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #fff; opacity: 0.3;"></div>
-                    <div class="legend-text">AAV9 Capsid</div>
-                </div>
-            </div>
+                <h4>Barth Syndrome (Diseased)</h4>
+                <ul>
+                    <li><strong>Gray molecules:</strong> Excessive MLCL accumulation (dysfunctional)</li>
+                    <li><strong>Few white molecules:</strong> Severe depletion of functional cardiolipin</li>
+                    <li><strong>Irregular lines:</strong> Disorganized, swollen cristae</li>
+                    <li><strong>Shaking animation:</strong> Indicates mitochondrial instability and dysfunction</li>
+                </ul>
 
-            <div id="quantitativeData" class="info-box data"></div>
+                <h4>Gene Therapy (Recovering)</h4>
+                <ul>
+                    <li><strong>Pulsing circles:</strong> AAV9 viral vectors delivering functional TAZ gene</li>
+                    <li><strong>Mixed molecules:</strong> Increasing white CL, decreasing gray MLCL</li>
+                    <li><strong>Improving lines:</strong> Cristae reorganizing toward normal structure</li>
+                    <li><strong>Gradual recovery:</strong> ~70-80% of mitochondria successfully treated</li>
+                </ul>
+            </div>
         </section>
 
         <!-- Molecular Pathway Section -->
@@ -846,31 +859,6 @@
                 </tbody>
             </table>
             <p class="reference">Valianpour et al., 2005; Claypool & Koehler, 2012</p>
-
-            <h3>Molecular Consequences</h3>
-            
-            <div class="info-box">
-                <h4>Structural Abnormalities</h4>
-                <ul>
-                    <li>Disorganized cristae with onion-like whorls</li>
-                    <li>Mitochondrial swelling and matrix expansion</li>
-                    <li>Reduced cristae density and junction stability</li>
-                    <li>Impaired respiratory chain supercomplex formation</li>
-                </ul>
-                <p class="reference">Acehan et al., 2007</p>
-            </div>
-
-            <div class="info-box">
-                <h4>Functional Deficits</h4>
-                <ul>
-                    <li>Decreased oxidative phosphorylation capacity</li>
-                    <li>Impaired mitochondrial protein import</li>
-                    <li>Defective mitophagy and quality control</li>
-                    <li>Altered apoptotic signaling via cytochrome c release</li>
-                    <li>Compromised mitochondrial fission and fusion dynamics</li>
-                </ul>
-                <p class="reference">Shi et al., 2015; He et al., 2013</p>
-            </div>
         </section>
 
         <!-- Gene Therapy Section -->
@@ -959,25 +947,6 @@
                 </div>
             </div>
 
-            <h3>Therapeutic Outcomes by Treatment Timing</h3>
-            
-            <div class="pathway-container">
-                <div class="pathway-step" data-step="1">
-                    <h4>Prevention: Neonatal Treatment (P1-2)</h4>
-                    <p><strong>Results:</strong> Complete prevention of cardiomyopathy, normal growth, normalized CL metabolism</p>
-                    <p><strong>Survival:</strong> 100% versus 0% in untreated TAZ-KO</p>
-                    <p><strong>Limitation:</strong> Requires early diagnosis</p>
-                </div>
-
-                <div class="pathway-step" data-step="2">
-                    <h4>Reversal: Adult Treatment (3+ months)</h4>
-                    <p><strong>Results:</strong> Reversal of established dilated cardiomyopathy, improved EF, reduced fibrosis</p>
-                    <p><strong>EF Change:</strong> 25% → 55-60%</p>
-                    <p><strong>Duration:</strong> Sustained improvement over 12+ months</p>
-                </div>
-            </div>
-            <p class="reference">Wang et al., 2020; Circulation Research</p>
-
             <h3>Molecular Effects of Gene Therapy</h3>
             
             <table class="data-table">
@@ -1029,46 +998,6 @@
                 </tbody>
             </table>
             <p class="reference">Suzuki-Hatano et al., 2019; Wang et al., 2020</p>
-
-            <h3>Clinical Translation Challenges</h3>
-            
-            <div class="info-box">
-                <h4>Key Obstacles</h4>
-                <ul>
-                    <li><strong>Transduction Threshold:</strong> Minimum 70% cardiomyocyte transduction required; scaling dose without immune activation</li>
-                    <li><strong>Immunogenicity:</strong> High viral doses risk neutralizing antibody formation and inflammatory response</li>
-                    <li><strong>Single Administration:</strong> Neutralizing antibodies prevent re-dosing</li>
-                    <li><strong>Bone Marrow Exclusion:</strong> AAV9 inefficiently transduces hematopoietic cells; neutropenia unaffected</li>
-                    <li><strong>Timing Dependency:</strong> Earlier intervention more effective; delayed diagnosis problematic</li>
-                    <li><strong>Long-term Expression:</strong> Episomal maintenance in dividing cells uncertain</li>
-                </ul>
-            </div>
-
-            <h3>Alternative Therapeutic Approaches</h3>
-            
-            <div class="pathway-container">
-                <div class="pathway-step" data-step="1">
-                    <h4>Elamipretide (Forzinity)</h4>
-                    <p><strong>Mechanism:</strong> Aromatic-cationic tetrapeptide that binds and stabilizes cardiolipin</p>
-                    <p><strong>Status:</strong> FDA approved September 2025</p>
-                    <p><strong>Advantages:</strong> Pharmacological approach, no genetic modification</p>
-                </div>
-
-                <div class="pathway-step" data-step="2">
-                    <h4>ABHD18 Inhibition</h4>
-                    <p><strong>Mechanism:</strong> Block deacylation step to prevent MLCL formation</p>
-                    <p><strong>Status:</strong> Preclinical development</p>
-                    <p><strong>Advantages:</strong> Small molecule, oral bioavailability potential</p>
-                    <p class="reference">Wang et al., 2025; Nature</p>
-                </div>
-
-                <div class="pathway-step" data-step="3">
-                    <h4>Base/Prime Editing</h4>
-                    <p><strong>Mechanism:</strong> Direct correction of point mutations without double-strand breaks</p>
-                    <p><strong>Status:</strong> Research stage</p>
-                    <p><strong>Challenge:</strong> Delivery to post-mitotic cardiomyocytes</p>
-                </div>
-            </div>
         </section>
 
         <!-- Clinical Data Section -->
@@ -1077,10 +1006,6 @@
             
             <h3>Natural History Studies</h3>
             
-            <div class="info-box">
-                <p>Longitudinal cohort data from national registries and multicenter studies provide quantitative insights into disease progression and outcomes.</p>
-            </div>
-
             <table class="data-table">
                 <thead>
                     <tr>
@@ -1147,87 +1072,8 @@
                         <td>10-20%</td>
                         <td>18-28%</td>
                     </tr>
-                    <tr>
-                        <td>QTc Interval</td>
-                        <td>Less than 450 ms</td>
-                        <td>Often prolonged</td>
-                        <td>Variable</td>
-                    </tr>
                 </tbody>
             </table>
-
-            <h3>Hematologic Data</h3>
-            
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Cell Type</th>
-                        <th>Normal Range</th>
-                        <th>BTHS Range</th>
-                        <th>Pattern</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Absolute Neutrophil Count</td>
-                        <td>1.5-8.0 × 10^9/L</td>
-                        <td>0.1-2.0 × 10^9/L</td>
-                        <td>Chronic, cyclic, or intermittent</td>
-                    </tr>
-                    <tr>
-                        <td>Monocytes</td>
-                        <td>0.2-0.8 × 10^9/L</td>
-                        <td>Often elevated</td>
-                        <td>Compensatory monocytosis</td>
-                    </tr>
-                    <tr>
-                        <td>Lymphocytes</td>
-                        <td>1.0-4.8 × 10^9/L</td>
-                        <td>Normal</td>
-                        <td>Unaffected</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Lipidomic Analysis</h3>
-            
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Lipid Species</th>
-                        <th>Normal (% of Total CL)</th>
-                        <th>BTHS (% of Total CL)</th>
-                        <th>Diagnostic Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Tetralinoleoyl-CL (72:8)</td>
-                        <td>75-85%</td>
-                        <td>5-20%</td>
-                        <td>High</td>
-                    </tr>
-                    <tr>
-                        <td>Total Mature CL</td>
-                        <td>80-90%</td>
-                        <td>15-30%</td>
-                        <td>High</td>
-                    </tr>
-                    <tr>
-                        <td>MLCL</td>
-                        <td>5-10%</td>
-                        <td>50-70%</td>
-                        <td>Very High</td>
-                    </tr>
-                    <tr>
-                        <td>MLCL/CL Ratio</td>
-                        <td>Less than 0.3</td>
-                        <td>Greater than 1.0</td>
-                        <td>Gold Standard</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p class="reference">Kulik et al., 2008; Valianpour et al., 2002</p>
         </section>
 
         <!-- References Section -->
@@ -1236,51 +1082,25 @@
             
             <h3>Primary Research Articles</h3>
             <ul class="reference-list">
-                <li>Wang, S., Li, Y., Xu, Y., Ma, Q., Lin, Z., Schlame, M., Bezzerides, V. J., Strathdee, D., & Pu, W. T. (2020). AAV gene therapy prevents and reverses heart failure in a murine knockout model of Barth syndrome. Circulation Research, 126(8), 1024-1039. https://doi.org/10.1161/CIRCRESAHA.119.315956</li>
+                <li>Wang, S., Li, Y., Xu, Y., Ma, Q., Lin, Z., Schlame, M., Bezzerides, V. J., Strathdee, D., & Pu, W. T. (2020). AAV gene therapy prevents and reverses heart failure in a murine knockout model of Barth syndrome. Circulation Research, 126(8), 1024-1039.</li>
                 
-                <li>Suzuki-Hatano, S., Saha, M., Rizzo, S. A., Witko, R. L., Gosiker, B. J., Ramanathan, M., Soustek, M. S., Jones, M. D., Kang, P. B., Byrne, B. J., Cade, W. T., & Pacak, C. A. (2019). AAV-mediated TAZ gene replacement restores mitochondrial and cardioskeletal function in Barth syndrome. Human Gene Therapy, 30(2), 139-154. https://doi.org/10.1089/hum.2018.020</li>
+                <li>Suzuki-Hatano, S., Saha, M., Rizzo, S. A., Witko, R. L., Gosiker, B. J., Ramanathan, M., Soustek, M. S., Jones, M. D., Kang, P. B., Byrne, B. J., Cade, W. T., & Pacak, C. A. (2019). AAV-mediated TAZ gene replacement restores mitochondrial and cardioskeletal function in Barth syndrome. Human Gene Therapy, 30(2), 139-154.</li>
                 
-                <li>Wang, C., Guo, Y., Wehbe, Z., Oksuz, F., Sadre, S., Wang, S., Ogut, O., & Boudina, S. (2025). Genetic suppression features ABHD18 as a Barth syndrome therapeutic target. Nature. https://doi.org/10.1038/s41586-025-09373-5</li>
+                <li>Wang, C., Guo, Y., Wehbe, Z., Oksuz, F., Sadre, S., Wang, S., Ogut, O., & Boudina, S. (2025). Genetic suppression features ABHD18 as a Barth syndrome therapeutic target. Nature.</li>
                 
-                <li>Clarke, S. L., Bowron, A., Gonzalez, I. L., Groves, S. J., Newbury-Ecob, R., Clayton, N., Martin, R. P., Tsai-Goodman, B., Garratt, V., Ashworth, M., Bowen, V. M., McCurdy, K. R., Damin, M. K., Spencer, C. T., Toth, M. J., Kelley, R. I., & Steward, C. G. (2013). Barth syndrome. Orphanet Journal of Rare Diseases, 8, 23. https://doi.org/10.1186/1750-1172-8-23</li>
+                <li>Clarke, S. L., Bowron, A., Gonzalez, I. L., et al. (2013). Barth syndrome. Orphanet Journal of Rare Diseases, 8, 23.</li>
                 
-                <li>Rigaud, C., Lebre, A. S., Touraine, R., Beaupain, B., Ottolenghi, C., Chabli, A., Ansquer, H., Ozsahin, H., Di Filippo, S., De Lonlay, P., Borm, B., Rivier, F., Vaillant, M. C., Mathieu-Dramard, M., Goldenberg, A., Viot, G., Charron, P., Rio, M., Bonnet, D., & Donadieu, J. (2013). Natural history of Barth syndrome: A national cohort study of 22 patients. Orphanet Journal of Rare Diseases, 8, 70. https://doi.org/10.1186/1750-1172-8-70</li>
+                <li>Rigaud, C., Lebre, A. S., Touraine, R., et al. (2013). Natural history of Barth syndrome: A national cohort study of 22 patients. Orphanet Journal of Rare Diseases, 8, 70.</li>
                 
-                <li>Schlame, M., & Greenberg, M. L. (2017). Cardiolipin remodeling and the function of tafazzin. Biochimica et Biophysica Acta - Molecular and Cell Biology of Lipids, 1862(8), 1007-1016. https://doi.org/10.1016/j.bbalip.2016.11.007</li>
+                <li>Schlame, M., & Greenberg, M. L. (2017). Cardiolipin remodeling and the function of tafazzin. Biochimica et Biophysica Acta, 1862(8), 1007-1016.</li>
                 
-                <li>Valianpour, F., Mitsakos, V., Schlemmer, D., Towbin, J. A., Taylor, J. M., Ekert, P. G., Thorburn, D. R., Munnich, A., Wanders, R. J., Barth, P. G., & Vaz, F. M. (2005). Monolysocardiolipins accumulate in Barth syndrome but do not lead to enhanced apoptosis. Journal of Lipid Research, 46, 1182-1195. https://doi.org/10.1194/jlr.M500056-JLR200</li>
+                <li>Valianpour, F., Mitsakos, V., Schlemmer, D., et al. (2005). Monolysocardiolipins accumulate in Barth syndrome but do not lead to enhanced apoptosis. Journal of Lipid Research, 46, 1182-1195.</li>
                 
-                <li>Xu, Y., Kelley, R. I., Blanck, T. J., & Schlame, M. (2006). Remodeling of cardiolipin by phospholipid transacylation. Journal of Biological Chemistry, 281, 7363-7372. https://doi.org/10.1074/jbc.M507339200</li>
+                <li>Xu, Y., Kelley, R. I., Blanck, T. J., & Schlame, M. (2006). Remodeling of cardiolipin by phospholipid transacylation. Journal of Biological Chemistry, 281, 7363-7372.</li>
                 
-                <li>Bione, S., D'Adamo, P., Maestrini, E., Gedeon, A. K., Bolhuis, P. A., & Toniolo, D. (1996). A novel X-linked gene, G4.5, is responsible for Barth syndrome. Nature Genetics, 12, 385-389. https://doi.org/10.1038/ng0496-385</li>
+                <li>Bione, S., D'Adamo, P., Maestrini, E., et al. (1996). A novel X-linked gene, G4.5, is responsible for Barth syndrome. Nature Genetics, 12, 385-389.</li>
                 
-                <li>Claypool, S. M., & Koehler, C. M. (2012). The complexity of cardiolipin in health and disease. Trends in Biochemical Sciences, 37(1), 32-41. https://doi.org/10.1016/j.tibs.2011.09.003</li>
-            </ul>
-
-            <h3>Reviews and Clinical Resources</h3>
-            <ul class="reference-list">
-                <li>Vernon, H. J. (2022). AAV-vector based gene therapy for mitochondrial disease: Progress and future perspectives. Orphanet Journal of Rare Diseases, 17, 189. https://doi.org/10.1186/s13023-022-02324-7</li>
-                
-                <li>Garlid, A. O., Schaffer, C. T., Kim, J., Bhatt, H., Guevara-Gonzalez, V., & Ping, P. (2020). TAZ encodes tafazzin, a transacylase essential for cardiolipin formation and central to the etiology of Barth syndrome. Gene, 726, 144168. https://doi.org/10.1016/j.gene.2019.144168</li>
-                
-                <li>Paradies, G., Paradies, V., Ruggiero, F. M., & Petrosillo, G. (2014). Role of cardiolipin in mitochondrial function and dynamics in health and disease. Cells, 3(4), 1100-1120. https://doi.org/10.3390/cells3041100</li>
-                
-                <li>Acehan, D., Vaz, F., Houtkooper, R. H., James, P. F., Moore, V., Tokunaga, C., Kulik, W., Wansapura, J., Toth, M. J., Strauss, A., & Khuchua, Z. (2011). Cardiac and skeletal muscle defects in a mouse model of human Barth syndrome. Journal of Biological Chemistry, 286, 899-908. https://doi.org/10.1074/jbc.M110.171439</li>
-                
-                <li>Shi, Y., Chen, Y., Vazquez, E., Li, Z., Jiang, L., & Qiu, Y. (2015). Cardiolipin remodeling by TAZ/tafazzin is selectively required for the initiation of mitophagy. Autophagy, 11(4), 643-652. https://doi.org/10.1080/15548627.2015.1023984</li>
-            </ul>
-
-            <h3>Clinical Databases</h3>
-            <ul class="reference-list">
-                <li>National Institutes of Health Genetic and Rare Diseases Information Center. Barth Syndrome. https://rarediseases.info.nih.gov/diseases/5890/barth-syndrome</li>
-                
-                <li>GeneCards: The Human Gene Database. TAZ Gene (Tafazzin). https://www.genecards.org/cgi-bin/carddisp.pl?gene=TAZ</li>
-                
-                <li>NCBI Gene Database. TAZ tafazzin [Homo sapiens]. Gene ID: 6901. https://www.ncbi.nlm.nih.gov/gene/6901</li>
-                
-                <li>AlphaFold Protein Structure Database. Tafazzin (Q16635). https://alphafold.ebi.ac.uk/entry/Q16635</li>
-                
-                <li>Barth Syndrome Foundation. Clinical and Research Resources. https://www.barthsyndrome.org</li>
+                <li>Claypool, S. M., & Koehler, C. M. (2012). The complexity of cardiolipin in health and disease. Trends in Biochemical Sciences, 37(1), 32-41.</li>
             </ul>
         </section>
     </div>
@@ -1305,348 +1125,137 @@
             event.target.classList.add('active');
         }
 
-        // 3D Visualization
-        let scene, camera, renderer, mitochondrion;
-        let rotationSpeed = 0.005;
-        let componentVisibility = {
-            mitochondria: true,
-            cristae: true,
-            cardiolipin: true,
-            mlcl: true,
-            etc: true,
-            tafazzin: true,
-            aav: true
-        };
-
-        function init3DViewer() {
-            const container = document.getElementById('viewer3D');
+        // Create visual representations
+        function createMitochondrion(containerId, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
             
-            // Scene setup
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x000000);
-            
-            // Camera
-            camera = new THREE.PerspectiveCamera(
-                45,
-                container.clientWidth / container.clientHeight,
-                0.1,
-                1000
-            );
-            camera.position.z = 15;
-            
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            container.appendChild(renderer.domElement);
-            
-            // Lights
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambientLight);
-            
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(10, 10, 10);
-            scene.add(directionalLight);
-            
-            // Create mitochondrion
-            createMitochondrion();
-            
-            // Mouse controls
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-            
-            container.addEventListener('mousedown', (e) => {
-                isDragging = true;
-            });
-            
-            container.addEventListener('mousemove', (e) => {
-                if (isDragging && mitochondrion) {
-                    const deltaMove = {
-                        x: e.offsetX - previousMousePosition.x,
-                        y: e.offsetY - previousMousePosition.y
-                    };
-                    
-                    mitochondrion.rotation.y += deltaMove.x * 0.01;
-                    mitochondrion.rotation.x += deltaMove.y * 0.01;
-                }
-                
-                previousMousePosition = {
-                    x: e.offsetX,
-                    y: e.offsetY
-                };
-            });
-            
-            container.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
-            
-            // Zoom
-            container.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                camera.position.z += e.deltaY * 0.01;
-                camera.position.z = Math.max(5, Math.min(30, camera.position.z));
-            });
-            
-            // Start animation
-            animate();
-        }
-
-        function createMitochondrion() {
-            const state = document.querySelector('input[name="cellState"]:checked').value;
-            
-            if (mitochondrion) {
-                scene.remove(mitochondrion);
-            }
-            
-            mitochondrion = new THREE.Group();
+            const mito = document.createElement('div');
+            mito.className = 'mitochondrion';
             
             // Outer membrane
-            const outerGeometry = new THREE.SphereGeometry(4, 32, 32);
-            outerGeometry.scale(1.5, 0.8, 1);
-            const outerMaterial = new THREE.MeshPhongMaterial({
-                color: state === 'barth' ? 0x666666 : 0xffffff,
-                transparent: true,
-                opacity: 0.3,
-                wireframe: false
-            });
-            const outerMembrane = new THREE.Mesh(outerGeometry, outerMaterial);
-            if (componentVisibility.mitochondria) {
-                mitochondrion.add(outerMembrane);
+            const outer = document.createElement('div');
+            outer.className = 'outer-membrane';
+            if (type === 'barth') {
+                outer.style.borderColor = '#666';
+                outer.style.transform = 'scale(1.1)';
             }
+            mito.appendChild(outer);
             
             // Inner membrane
-            const innerGeometry = new THREE.SphereGeometry(3.8, 32, 32);
-            innerGeometry.scale(1.5, 0.8, 1);
-            const innerMaterial = new THREE.MeshPhongMaterial({
-                color: state === 'barth' ? 0x444444 : 0xdddddd,
-                transparent: true,
-                opacity: 0.4
-            });
-            const innerMembrane = new THREE.Mesh(innerGeometry, innerMaterial);
-            if (componentVisibility.mitochondria) {
-                mitochondrion.add(innerMembrane);
+            const inner = document.createElement('div');
+            inner.className = 'inner-membrane';
+            if (type === 'barth') {
+                inner.style.borderColor = '#555';
             }
+            mito.appendChild(inner);
             
             // Cristae
-            if (componentVisibility.cristae) {
-                const cristaeCount = state === 'barth' ? 6 : 12;
-                for (let i = 0; i < cristaeCount; i++) {
-                    const cristaeGeometry = new THREE.PlaneGeometry(5, 0.3);
-                    const cristaeMaterial = new THREE.MeshPhongMaterial({
-                        color: state === 'barth' ? 0x333333 : 0xaaaaaa,
-                        side: THREE.DoubleSide
-                    });
-                    const cristae = new THREE.Mesh(cristaeGeometry, cristaeMaterial);
-                    
-                    if (state === 'barth') {
-                        // Disorganized
-                        cristae.position.y = (Math.random() - 0.5) * 4;
-                        cristae.rotation.z = Math.random() * 0.5;
-                    } else {
-                        // Organized
-                        cristae.position.y = (i - cristaeCount/2) * 0.5;
-                    }
-                    
-                    mitochondrion.add(cristae);
-                }
-            }
+            const cristaeContainer = document.createElement('div');
+            cristaeContainer.className = 'cristae-container';
             
-            // Cardiolipin molecules
-            if (componentVisibility.cardiolipin) {
-                const clCount = state === 'barth' ? 15 : 40;
-                const clGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-                const clMaterial = new THREE.MeshPhongMaterial({
-                    color: 0xffffff,
-                    emissive: 0x888888
-                });
+            const cristaeCount = type === 'barth' ? 6 : 12;
+            for (let i = 0; i < cristaeCount; i++) {
+                const crista = document.createElement('div');
+                crista.className = 'crista';
+                crista.style.top = (i * (100 / cristaeCount)) + '%';
                 
-                for (let i = 0; i < clCount; i++) {
-                    const cl = new THREE.Mesh(clGeometry, clMaterial);
-                    const theta = Math.random() * Math.PI * 2;
-                    const phi = Math.random() * Math.PI;
-                    const radius = 3.5;
-                    
-                    cl.position.x = radius * Math.sin(phi) * Math.cos(theta) * 1.5;
-                    cl.position.y = radius * Math.sin(phi) * Math.sin(theta) * 0.8;
-                    cl.position.z = radius * Math.cos(phi);
-                    
-                    mitochondrion.add(cl);
+                if (type === 'barth') {
+                    crista.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+                    crista.style.background = '#555';
+                    crista.className += ' shake';
                 }
-            }
-            
-            // MLCL (accumulated in Barth)
-            if (componentVisibility.mlcl && state === 'barth') {
-                const mlclCount = 60;
-                const mlclGeometry = new THREE.SphereGeometry(0.12, 8, 8);
-                const mlclMaterial = new THREE.MeshPhongMaterial({
-                    color: 0x666666
-                });
                 
-                for (let i = 0; i < mlclCount; i++) {
-                    const mlcl = new THREE.Mesh(mlclGeometry, mlclMaterial);
-                    mlcl.position.x = (Math.random() - 0.5) * 8;
-                    mlcl.position.y = (Math.random() - 0.5) * 4;
-                    mlcl.position.z = (Math.random() - 0.5) * 5;
-                    
-                    mitochondrion.add(mlcl);
+                cristaeContainer.appendChild(crista);
+            }
+            mito.appendChild(cristaeContainer);
+            
+            // Molecules
+            if (type === 'normal') {
+                // Abundant cardiolipin
+                for (let i = 0; i < 30; i++) {
+                    const cl = document.createElement('div');
+                    cl.className = 'molecule cardiolipin';
+                    const angle = (i / 30) * Math.PI * 2;
+                    const radius = 120;
+                    cl.style.left = (140 + Math.cos(angle) * radius) + 'px';
+                    cl.style.top = (80 + Math.sin(angle) * radius * 0.55) + 'px';
+                    mito.appendChild(cl);
+                }
+            } else if (type === 'barth') {
+                // Mostly MLCL
+                for (let i = 0; i < 40; i++) {
+                    const mlcl = document.createElement('div');
+                    mlcl.className = 'molecule mlcl';
+                    mlcl.style.left = (Math.random() * 250 + 15) + 'px';
+                    mlcl.style.top = (Math.random() * 140 + 10) + 'px';
+                    mito.appendChild(mlcl);
+                }
+                // Few cardiolipin
+                for (let i = 0; i < 8; i++) {
+                    const cl = document.createElement('div');
+                    cl.className = 'molecule cardiolipin';
+                    cl.style.left = (Math.random() * 200 + 40) + 'px';
+                    cl.style.top = (Math.random() * 100 + 30) + 'px';
+                    mito.appendChild(cl);
+                }
+            } else if (type === 'therapy') {
+                // Mixed CL and MLCL
+                for (let i = 0; i < 22; i++) {
+                    const cl = document.createElement('div');
+                    cl.className = 'molecule cardiolipin';
+                    const angle = (i / 22) * Math.PI * 2;
+                    const radius = 110;
+                    cl.style.left = (140 + Math.cos(angle) * radius) + 'px';
+                    cl.style.top = (80 + Math.sin(angle) * radius * 0.55) + 'px';
+                    mito.appendChild(cl);
+                }
+                for (let i = 0; i < 15; i++) {
+                    const mlcl = document.createElement('div');
+                    mlcl.className = 'molecule mlcl';
+                    mlcl.style.left = (Math.random() * 180 + 50) + 'px';
+                    mlcl.style.top = (Math.random() * 100 + 30) + 'px';
+                    mito.appendChild(mlcl);
+                }
+                // AAV particles
+                for (let i = 0; i < 4; i++) {
+                    const aav = document.createElement('div');
+                    aav.className = 'aav-particle pulse';
+                    aav.style.left = (Math.random() * 220 + 30) + 'px';
+                    aav.style.top = (Math.random() * 120 + 20) + 'px';
+                    mito.appendChild(aav);
                 }
             }
             
             // ETC complexes
-            if (componentVisibility.etc) {
-                const complexCount = state === 'barth' ? 4 : 8;
-                const complexGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.3);
-                const complexMaterial = new THREE.MeshPhongMaterial({
-                    color: state === 'barth' ? 0x555555 : 0x888888
-                });
-                
-                for (let i = 0; i < complexCount; i++) {
-                    const complex = new THREE.Mesh(complexGeometry, complexMaterial);
-                    const angle = (i / complexCount) * Math.PI * 2;
-                    complex.position.x = Math.cos(angle) * 3 * 1.5;
-                    complex.position.y = Math.sin(angle) * 3 * 0.8;
-                    complex.position.z = (Math.random() - 0.5) * 2;
-                    
-                    mitochondrion.add(complex);
+            const complexCount = type === 'barth' ? 4 : 8;
+            for (let i = 0; i < complexCount; i++) {
+                const complex = document.createElement('div');
+                complex.className = 'etc-complex';
+                complex.style.left = (40 + i * 30) + 'px';
+                complex.style.top = '70px';
+                if (type === 'barth') {
+                    complex.style.opacity = '0.3';
                 }
+                mito.appendChild(complex);
             }
             
-            // Tafazzin enzyme
-            if (componentVisibility.tafazzin && state !== 'barth') {
-                const tazCount = state === 'therapy' ? 6 : 8;
-                const tazGeometry = new THREE.TetrahedronGeometry(0.3);
-                const tazMaterial = new THREE.MeshPhongMaterial({
-                    color: 0x444444
-                });
-                
-                for (let i = 0; i < tazCount; i++) {
-                    const taz = new THREE.Mesh(tazGeometry, tazMaterial);
-                    const angle = (i / tazCount) * Math.PI * 2;
-                    taz.position.x = Math.cos(angle) * 2.5 * 1.5;
-                    taz.position.y = Math.sin(angle) * 2.5 * 0.8;
-                    taz.position.z = (Math.random() - 0.5);
-                    
-                    mitochondrion.add(taz);
-                }
-            }
-            
-            // AAV vectors
-            if (componentVisibility.aav && state === 'therapy') {
-                const aavCount = 4;
-                const aavGeometry = new THREE.IcosahedronGeometry(0.4, 1);
-                const aavMaterial = new THREE.MeshPhongMaterial({
-                    color: 0xffffff,
-                    transparent: true,
-                    opacity: 0.6,
-                    wireframe: true
-                });
-                
-                for (let i = 0; i < aavCount; i++) {
-                    const aav = new THREE.Mesh(aavGeometry, aavMaterial);
-                    aav.position.x = (Math.random() - 0.5) * 10;
-                    aav.position.y = (Math.random() - 0.5) * 6;
-                    aav.position.z = (Math.random() - 0.5) * 6;
-                    
-                    mitochondrion.add(aav);
-                }
-            }
-            
-            scene.add(mitochondrion);
-            updateInfoDisplay();
+            container.appendChild(mito);
         }
 
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            if (mitochondrion) {
-                mitochondrion.rotation.y += rotationSpeed;
-            }
-            
-            renderer.render(scene, camera);
-        }
-
-        function updateVisualization() {
-            createMitochondrion();
-        }
-
-        function toggleComponent(component, element) {
-            componentVisibility[component] = !componentVisibility[component];
-            element.classList.toggle('active');
-            createMitochondrion();
-        }
-
-        function updateRotation(value) {
-            rotationSpeed = (value / 100) * 0.01;
-            document.getElementById('rotationValue').textContent = (value / 100).toFixed(2);
-        }
-
-        function updateInfoDisplay() {
-            const state = document.querySelector('input[name="cellState"]:checked').value;
-            const infoDiv = document.getElementById('viewerInfo');
-            const dataDiv = document.getElementById('quantitativeData');
-            
-            let info = '';
-            let data = '';
-            
-            if (state === 'normal') {
-                info = '<strong>NORMAL CELL</strong><br>';
-                info += 'Functional TAZ gene<br>';
-                info += 'Organized cristae<br>';
-                info += 'Mature cardiolipin: 80%';
-                
-                data = '<h4>Quantitative Parameters</h4>';
-                data += '<table class="data-table"><tbody>';
-                data += '<tr><td>MLCL/CL Ratio</td><td>0.1</td></tr>';
-                data += '<tr><td>Tetralinoleoyl-CL</td><td>75-85%</td></tr>';
-                data += '<tr><td>ATP Production</td><td>100%</td></tr>';
-                data += '<tr><td>Complex I-IV Activity</td><td>100%</td></tr>';
-                data += '<tr><td>Cardiac EF</td><td>55-65%</td></tr>';
-                data += '</tbody></table>';
-            } else if (state === 'barth') {
-                info = '<strong>BARTH SYNDROME</strong><br>';
-                info += 'Mutated TAZ gene<br>';
-                info += 'Disorganized cristae<br>';
-                info += 'MLCL accumulation';
-                
-                data = '<h4>Quantitative Parameters</h4>';
-                data += '<table class="data-table"><tbody>';
-                data += '<tr><td>MLCL/CL Ratio</td><td>>1.0</td></tr>';
-                data += '<tr><td>Tetralinoleoyl-CL</td><td>5-20%</td></tr>';
-                data += '<tr><td>ATP Production</td><td>30-50%</td></tr>';
-                data += '<tr><td>Complex I-IV Activity</td><td>50-75%</td></tr>';
-                data += '<tr><td>Cardiac EF</td><td>20-30%</td></tr>';
-                data += '</tbody></table>';
-            } else {
-                info = '<strong>GENE THERAPY</strong><br>';
-                info += 'AAV9-delivered TAZ<br>';
-                info += 'Improving cristae<br>';
-                info += '70-80% transduction';
-                
-                data = '<h4>Quantitative Parameters</h4>';
-                data += '<table class="data-table"><tbody>';
-                data += '<tr><td>MLCL/CL Ratio</td><td>0.2-0.4</td></tr>';
-                data += '<tr><td>Tetralinoleoyl-CL</td><td>60-75%</td></tr>';
-                data += '<tr><td>ATP Production</td><td>70-85%</td></tr>';
-                data += '<tr><td>Complex I-IV Activity</td><td>85-95%</td></tr>';
-                data += '<tr><td>Cardiac EF</td><td>50-60%</td></tr>';
-                data += '</tbody></table>';
-            }
-            
-            infoDiv.innerHTML = info;
-            dataDiv.innerHTML = data;
-        }
-
-        // Initialize on load
+        // Initialize visualizations
         window.addEventListener('load', () => {
-            init3DViewer();
+            createMitochondrion('visual-normal', 'normal');
+            createMitochondrion('visual-barth', 'barth');
+            createMitochondrion('visual-therapy', 'therapy');
         });
 
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            const container = document.getElementById('viewer3D');
-            if (container && camera && renderer) {
-                camera.aspect = container.clientWidth / container.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(container.clientWidth, container.clientHeight);
+        // Card interaction
+        document.addEventListener('click', (e) => {
+            const card = e.target.closest('.comparison-card');
+            if (card) {
+                document.querySelectorAll('.comparison-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
             }
         });
     </script>
